@@ -1,10 +1,13 @@
 # app.py
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import io
 import csv
 import time
+# from joblib import load # Descomenta esto cuando tengas tus modelos guardados
+
 
 # --------------------------
 # CONFIG
@@ -109,7 +112,7 @@ if st.session_state["page"] == "landing":
 # --------------------------
 elif st.session_state["page"] == "main":
     st.sidebar.title("🔭 Navegación")
-    section = st.sidebar.radio("Ir a:", ["Exploración de Datos", "Visualizaciones", "Panel Habitabilidad", "Volver al inicio"])
+    section = st.sidebar.radio("Ir a:", ["Exploración de Datos", "Visualizaciones", "Panel Habitabilidad", "Predicción con ML", "Volver al inicio"])
 
     if section == "Volver al inicio":
         st.session_state["page"] = "landing"
@@ -204,3 +207,75 @@ elif st.session_state["page"] == "main":
                 if len(candidatos) > 0:
                     st.dataframe(candidatos.head(50))
 
+    # --------------------------
+    # Predicción con ML
+    # --------------------------
+    elif section == "Predicción con ML":
+        st.title("🤖 Predicción de Habitabilidad con ML")
+        st.write("Usa modelos de Machine Learning entrenados para predecir la habitabilidad de los exoplanetas.")
+
+        if "df" not in st.session_state:
+            st.warning("⚠️ Primero carga un dataset en la sección 'Exploración de Datos'.")
+        else:
+            df = st.session_state["df"]
+
+            # --- Simulación de Carga de Modelos ---
+            # En un caso real, cargarías tus modelos desde un archivo.
+            # Ejemplo: model = load('random_forest_model.joblib')
+            # Por ahora, simularemos las predicciones.
+            @st.cache_data
+            def simulate_prediction(model_name, data):
+                # Simula un tiempo de procesamiento
+                time.sleep(1)
+                # Genera predicciones aleatorias (0 o 1)
+                # ¡REEMPLAZA ESTO CON TU LÓGICA DE PREDICCIÓN REAL!
+                # Ejemplo real: predictions = model.predict(data)
+                predictions = np.random.randint(0, 2, size=len(data))
+                return predictions
+
+            # --- Selección del Modelo ---
+            model_options = [
+                "Regresión logística", "Random Forest", "Support Vector Machine",
+                "K-Nearest Neighbors", "Decision Tree", "Naive Bayes", "Gradient Boosting"
+            ]
+            selected_model = st.selectbox("Selecciona el modelo de ML a utilizar:", model_options)
+
+            # --- Preparación de Datos para el Modelo ---
+            # ¡IMPORTANTE! Debes usar las mismas columnas (features) que usaste para entrenar.
+            # Aquí asumimos algunas columnas comunes. Adáptalas a tu modelo.
+            features = ["pl_rade", "pl_orbper", "pl_eqt", "pl_insol", "st_teff", "st_rad"]
+            
+            # Verificar si las columnas necesarias existen
+            missing_cols = [col for col in features if col not in df.columns]
+            if missing_cols:
+                st.error(f"El dataset no contiene las columnas necesarias para la predicción: {', '.join(missing_cols)}")
+            else:
+                df_predict = df.copy()
+                
+                # Limpieza de datos: convertir a numérico y rellenar NaNs (estrategia simple)
+                # Debes usar la misma estrategia de imputación que en tu entrenamiento.
+                for col in features:
+                    df_predict[col] = pd.to_numeric(df_predict[col], errors='coerce')
+                    df_predict[col].fillna(df_predict[col].median(), inplace=True)
+
+                X = df_predict[features]
+
+                if st.button(f"Ejecutar predicción con {selected_model}"):
+                    with st.spinner("🧠 Realizando predicciones..."):
+                        # --- Ejecución de la Predicción ---
+                        predictions = simulate_prediction(selected_model, X)
+                        df_predict['prediccion_habitable'] = predictions
+
+                    st.success("¡Predicción completada!")
+
+                    # --- Mostrar Resultados ---
+                    habitable_count = df_predict['prediccion_habitable'].sum()
+                    st.metric(
+                        label="Planetas clasificados como 'Potencialmente Habitables'",
+                        value=f"{habitable_count}"
+                    )
+
+                    st.write("Resultados de la predicción (1 = Potencialmente Habitable, 0 = No Habitable):")
+                    # Mostramos solo las columnas relevantes y la predicción
+                    display_cols = ['pl_name'] + features + ['prediccion_habitable'] if 'pl_name' in df_predict.columns else features + ['prediccion_habitable']
+                    st.dataframe(df_predict[display_cols].head(50))
