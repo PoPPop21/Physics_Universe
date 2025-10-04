@@ -1,0 +1,33 @@
+/* style.css - estilo espacial */
+body {
+    margin: 0;
+    font-family: 'Century Gothic', Arial, sans-serif;
+    color: #e6eef6;
+    background: #000; /* fallback */
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    padding: 28px;
+    background: rgba(2,6,23,0.55);
+    border-radius: 12px;
+    max-width: 1200px;
+    margin: 40px auto;
+    box-shadow: 0 8px 30px rgba(94,96,206,0.12);
+    backdrop-filter: blur(4px);
+}
+
+/* Titles */
+h1, .title {
+    color: #f0f7ff;
+    text-align: center;
+    text-shadow: 0 0 18px rgba(94,96,206,0.35);
+}
+
+/* Buttons (bootstrap will take care, this is extra) */
+.btn-primary {
+    background: linear-gradient(90deg,#5e60ce,#7400b8);
+    border: none;
+    box-shadow: 0 4px 20px rgba(116,0,184,0.18);
+}
