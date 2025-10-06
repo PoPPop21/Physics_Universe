@@ -390,7 +390,7 @@ if st.session_state["page"] == "landing":
                           color: white;
                           text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
                           letter-spacing: 1px;'>
-                    🚀 NASA SPACE APPS - ASTROEN
+                    🚀 NASA SPACE APPS - ASTROGEN
                 </p>
             </div>
         </div>
@@ -405,7 +405,7 @@ if st.session_state["page"] == "landing":
                        letter-spacing: 2px;
                        font-family: "Segoe UI", Arial, sans-serif;
                        margin-bottom: 25px;'>
-                Explorador de Exoplanetas Habitables
+                🌌 Explorador de Exoplanetas Habitables
             </h1>
             <p style='font-size: 24px; 
                       color: #FFFFFF; 
@@ -415,7 +415,7 @@ if st.session_state["page"] == "landing":
                       margin-top: 20px;
                       letter-spacing: 1px;
                       font-family: "Segoe UI", Arial, sans-serif;'>
-                🚀 Un mundo aparte: en busqueda de exoplanetas con IA
+                🚀 Un viaje interactivo hacia mundos lejanos con IA avanzada
             </p>
             <p style='font-size: 19px; 
                       color: #E8F0FF; 
@@ -903,11 +903,47 @@ elif st.session_state["page"] == "main":
                     
                     st.success("🏆 Mejor Modelo: **" + mejor_modelo_nombre + "** con {:.2%} de accuracy".format(mejor_accuracy))
                     
-                    # Tabla de resultados
+                    # Tabla de resultados con formato mejorado
+                    st.markdown("#### 📋 Resultados Completos")
+                    
+                    # Formatear la tabla manualmente
+                    df_resultados_fmt = df_resultados.copy()
+                    df_resultados_fmt['CV Mean'] = df_resultados_fmt['CV Mean'].apply(lambda x: "{:.2%}".format(x))
+                    df_resultados_fmt['CV Std'] = df_resultados_fmt['CV Std'].apply(lambda x: "{:.2%}".format(x))
+                    df_resultados_fmt['Accuracy'] = df_resultados_fmt['Accuracy'].apply(lambda x: "{:.2%}".format(x))
+                    df_resultados_fmt['Precision'] = df_resultados_fmt['Precision'].apply(lambda x: "{:.2%}".format(x))
+                    df_resultados_fmt['Recall'] = df_resultados_fmt['Recall'].apply(lambda x: "{:.2%}".format(x))
+                    df_resultados_fmt['F1-Score'] = df_resultados_fmt['F1-Score'].apply(lambda x: "{:.2%}".format(x))
+                    
                     st.dataframe(
-                        df_resultados.style.background_gradient(subset=['Accuracy', 'Precision', 'Recall', 'F1-Score'], cmap='RdYlGn'),
+                        df_resultados_fmt,
                         use_container_width=True
                     )
+                    
+                    # Heatmap de métricas
+                    st.markdown("#### 🔥 Heatmap de Rendimiento")
+                    
+                    # Preparar datos para heatmap
+                    metrics_for_heatmap = df_resultados[['Accuracy', 'Precision', 'Recall', 'F1-Score']].values
+                    
+                    fig_heatmap = go.Figure(data=go.Heatmap(
+                        z=metrics_for_heatmap,
+                        x=['Accuracy', 'Precision', 'Recall', 'F1-Score'],
+                        y=df_resultados['Modelo'].tolist(),
+                        colorscale='RdYlGn',
+                        text=np.round(metrics_for_heatmap, 3),
+                        texttemplate='%{text:.2%}',
+                        textfont={"size": 12},
+                        colorbar=dict(title="Score")
+                    ))
+                    
+                    fig_heatmap.update_layout(
+                        title='Heatmap de Métricas por Modelo',
+                        template='plotly_dark',
+                        height=400
+                    )
+                    
+                    st.plotly_chart(fig_heatmap, use_container_width=True)
                     
                     # Gráfico de barras comparativo
                     st.markdown("### 📈 Visualización Comparativa")
@@ -1238,7 +1274,7 @@ elif st.session_state["page"] == "main":
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #888; padding: 20px;'>
-    <p> Explorador de Exoplanetas Habitables | NASA Space Apps Challenge 2025</p>
-    <p>Desarrollado usando Streamlit, Plotly y Scikit-learn</p>
+    <p>🌌 Explorador de Exoplanetas Habitables | NASA Space Apps Challenge 2024</p>
+    <p>Desarrollado con ❤️ usando Streamlit, Plotly y Scikit-learn</p>
 </div>
 """, unsafe_allow_html=True)
