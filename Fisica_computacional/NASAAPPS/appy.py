@@ -390,7 +390,7 @@ if st.session_state["page"] == "landing":
                           color: white;
                           text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
                           letter-spacing: 1px;'>
-                    🚀 NASA SPACE APPS - ASTROGEN
+                    🚀 NASA SPACE APPS - ASTROEN
                 </p>
             </div>
         </div>
@@ -1274,7 +1274,7 @@ elif st.session_state["page"] == "main":
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #888; padding: 20px;'>
-    <p>🌌 Explorador de Exoplanetas Habitables | NASA Space Apps Challenge 2024</p>
-    <p>Desarrollado con ❤️ usando Streamlit, Plotly y Scikit-learn</p>
+    <p> Explorador de Exoplanetas Habitables | NASA Space Apps Challenge 2025</p>
+    <p>Desarrollado usando Streamlit, Plotly y Scikit-learn</p>
 </div>
 """, unsafe_allow_html=True)
